@@ -232,7 +232,7 @@ public void closeConnection(){
 				//double tempned = rs.getDouble("tempned");
 				int paav = rs.getInt("paav");
 				double SMHItemp = rs.getDouble("SMHItemp");	
-				double tempupp = paaAlfa - ((temperaturTotal-SMHItemp)*avBeta*0.5);
+				double tempupp = (paaAlfa - (temperaturTotal-SMHItemp)*avBeta)*0.5;
 				double tempned = (temperaturTotal-SMHItemp)*avBeta*0.5; 
 				
 				if (paav == 1) {
