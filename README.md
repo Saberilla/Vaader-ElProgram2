@@ -1,2 +1,2 @@
 # Vaader
-Home Optimization Project for lowest energy costs
+Home Optimization Project for lowest energy costs.
