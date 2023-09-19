@@ -85,6 +85,26 @@ public void closeConnection(){
 		return Collections.unmodifiableList(list);
 		
 	}
+	
+	public void updateKalender(Date date, int dagtyp) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		String strDate = "";
+		strDate = formatter.format(date);
+		//System.out.println(strDate);
+		
+		try {
+
+			String sql;
+			sql = "UPDATE Kalender SET dagtyp=" + dagtyp +" WHERE data_date=" + strDate +";";
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 
 	public void insertDagtData(String typ, String timme, String tmin, String tmax){

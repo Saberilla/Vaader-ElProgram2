@@ -15,14 +15,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.util.converter.IntegerStringConverter;
  
 public class Main extends Application {
 	
@@ -435,35 +438,22 @@ public class Main extends Application {
 				sql.getKalenderData());
 		table5.setItems(dataLista);
 		
+		table5.setEditable(true);
+		
 		TableColumn<KalenderData, Date> c1 = new TableColumn<>("date");
 		c1.setCellValueFactory(new PropertyValueFactory<>("date"));
 		
 		TableColumn<KalenderData, Integer> c2 = new TableColumn<>("dagtyp");
 		c2.setCellValueFactory(new PropertyValueFactory<>("dagTyp"));
+		c2.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		c2.setOnEditCommit(e -> { 
+			KalenderData v = e.getRowValue(); 
+			v.setDagTyp(e.getNewValue());
+			sql.updateKalender(v.getDate(), v.getDagTyp());
+
+		});
 		
 		table5.getColumns().addAll(c1, c2);
-		
-		//textfields
-		HBox textFields5 = new HBox();
-		textFields5.setPadding(new Insets(10,10,10,10));
-		textFields5.setStyle("-fx-spacing: 5");
-		TextField dateField = new TextField();
-		dateField.setPromptText("date");
-		dateField.setStyle("-fx-font-size: 18");
-		TextField typField = new TextField();
-		typField.setPromptText("dagtyp");
-		typField.setStyle("-fx-font-size: 18");
-		
-		Button updateBtn5 = new Button("Update");
-		//FUNKTION
-		
-		//Label label5 = new Label("Sida 5");
-		//root5.setCenter(label5);
-		
-		textFields5.setAlignment(Pos.CENTER);
-		textFields5.getChildren().addAll(dateField, typField,updateBtn5);
-		
-		root5.setBottom(textFields5);
 		
 		scene5 = new Scene(root5, 1000, 600);		
 		return scene5;
