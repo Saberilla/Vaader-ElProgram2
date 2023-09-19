@@ -59,6 +59,33 @@ public void closeConnection(){
 	
 }
 
+	public List<KalenderData> getKalenderData(){
+		
+		List<KalenderData> list = new ArrayList<>();
+		try {
+			
+			String sql;
+			sql = "SELECT * FROM Kalender;";
+			
+			//System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				Date date = rs.getDate("data_date");
+				int dagtyp = rs.getInt("dagtyp");
+				
+				
+				list.add(new KalenderData(date, dagtyp));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Collections.unmodifiableList(list);
+		
+	}
+
 
 	public void insertDagtData(String typ, String timme, String tmin, String tmax){
 		
@@ -74,21 +101,106 @@ public void closeConnection(){
 		
 	} 
 	
-	/*public boolean ifKeyExists(String dagtyp) {
+	public void deleteDagtData(String dagtyp, String timme) {
+		try {
+
+			String sql;
+			sql = createDeleteStatement(dagtyp, timme);
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
-	private String createSelectStatement(String key, String timme) {
+	private String createDeleteStatement(String dagtyp, String timme) {
 		StringBuilder str = new StringBuilder();
-		str.append("SELECT data_date,timmedag\n"
-				+ "FROM dagdata \n"
-				+ "where data_date=");
-		str.append(key);
-		str.append(" and timmedag=");
+		str.append("DELETE FROM Dagtyp \n"
+				+ "where dagtyp=");
+		str.append(dagtyp);
+		str.append(" and timme=");
 		str.append(timme);
 		str.append(";");
 		return str.toString();
-	}*/
+	}
+	
+	public void updateDagtData(String dagtyp, String timme, String tmin, String tmax) {
+		try {
+
+			String sql;
+			sql = createUpdateStatement(dagtyp, timme, tmin, tmax);
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String createUpdateStatement(String dagtyp, String timme, String tmin, String tmax) {
+		StringBuilder str = new StringBuilder();
+		str.append("UPDATE Dagtyp \n"
+				+ "set tmin=");
+		str.append(tmin);
+		str.append(",tmax=");
+		str.append(tmax + "\n");
+		str.append("where dagtyp=");
+		str.append(dagtyp);
+		str.append(" and timme=");
+		str.append(timme);
+		str.append(";");
+		
+		return str.toString();
+		
+	}
+	
+	public boolean ifKeyExists(String dagtyp, String timme) {
+		boolean exists = false;
+		
+		try {
+
+			String sql = createExistsStatement(dagtyp, timme);
+			
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			int timmeInt = Integer.parseInt( timme );
+			
+			while(rs.next()) {
+
+				String dagtypen = rs.getString("dagtyp");
+				
+				int timmedag = rs.getInt("timme");
+				
+				if (dagtyp.equals(dagtypen) && timmeInt == timmedag) {
+					exists = true;
+				}
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+
+		return exists;
+		
+		
+	}
+	
+	private String createExistsStatement(String key, String timme) {
+		StringBuilder str = new StringBuilder();
+		str.append("SELECT dagtyp,timme\n"
+				+ "FROM Dagtyp \n"
+				+ "where dagtyp=");
+		str.append(key);
+		str.append(" and timme=");
+		str.append(timme);
+		str.append(";");
+		return str.toString();
+	}
 	
 	
 	
