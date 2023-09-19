@@ -15,14 +15,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.util.converter.IntegerStringConverter;
  
 public class Main extends Application {
 	
@@ -34,6 +37,7 @@ public class Main extends Application {
 	private TableView<SimData> table2 = new TableView<>();
 	private TableView<ResData> table3 = new TableView<>();
 	private TableView<DagtData> table4 = new TableView<>();
+	private TableView<KalenderData> table5 = new TableView<>();
 	
 	//menu
 	private HBox hbox;
@@ -380,16 +384,40 @@ public class Main extends Application {
 		TextField maxField = new TextField();
 		maxField.setPromptText("tmax");
 		//tempField.setStyle("-fx-font-size: 18");
-		Label date = new Label("Date:");
-		Label tid = new Label("Tid:");
-		Label altid = new Label("Alt_id:");
-		Label temp = new Label("Temp:");
 		
 		Button updateBtn4 = new Button("Update");
 		//FUNKTION
 		
-		//Label label4 = new Label("Sida 4");
-		//root4.setCenter(label4);
+		updateBtn4.setOnAction(e -> {
+			String typ = typField.getText().trim();
+			String timme = timmeField.getText().trim();
+			String tmin = minField.getText().trim();
+			String tmax = maxField.getText().trim();
+			
+			if(sql.ifKeyExists(typ, timme)) { //REFACT Anv samma lista
+				//System.out.println("Finns");
+				if(tmin.isEmpty() && tmax.isEmpty()) { 
+					//delete
+					sql.deleteDagtData(typ, timme);
+					ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
+							sql.getDagtData());
+					table4.setItems(newDataLista);
+
+				} else {
+					//update
+					sql.updateDagtData(typ, timme, tmin, tmax);
+					ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
+							sql.getDagtData());
+					table4.setItems(newDataLista);
+				}
+			} else {
+				//insert
+				sql.insertDagtData(typ, timme, tmin, tmax);
+				ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
+						sql.getDagtData());
+				table4.setItems(newDataLista);
+			}
+		});
 		
 		textFields4.setAlignment(Pos.CENTER);
 		textFields4.getChildren().addAll(typField, timmeField, minField, maxField, updateBtn4);
@@ -405,8 +433,27 @@ public class Main extends Application {
 
 		root5.setTop(createMenu(false, false, false, false, true, false ,false));
 		
-		Label label5 = new Label("Sida 5");
-		root5.setCenter(label5);
+		root5.setCenter(table5);
+		ObservableList<KalenderData> dataLista = FXCollections.observableArrayList(
+				sql.getKalenderData());
+		table5.setItems(dataLista);
+		
+		table5.setEditable(true);
+		
+		TableColumn<KalenderData, Date> c1 = new TableColumn<>("date");
+		c1.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
+		TableColumn<KalenderData, Integer> c2 = new TableColumn<>("dagtyp");
+		c2.setCellValueFactory(new PropertyValueFactory<>("dagTyp"));
+		c2.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		c2.setOnEditCommit(e -> { 
+			KalenderData v = e.getRowValue(); 
+			v.setDagTyp(e.getNewValue());
+			sql.updateKalender(v.getDate(), v.getDagTyp());
+
+		});
+		
+		table5.getColumns().addAll(c1, c2);
 		
 		scene5 = new Scene(root5, 1000, 600);		
 		return scene5;
