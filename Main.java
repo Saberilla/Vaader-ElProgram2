@@ -29,6 +29,9 @@ import javafx.util.converter.IntegerStringConverter;
  
 public class Main extends Application {
 	
+	private double width = 1000;
+	private double height = 500;
+	
 	private SQLHandler sql = new SQLHandler();
 	
 	private Stage stage;
@@ -38,6 +41,7 @@ public class Main extends Application {
 	private TableView<ResData> table3 = new TableView<>();
 	private TableView<DagtData> table4 = new TableView<>();
 	private TableView<KalenderData> table5 = new TableView<>();
+	private TableView<DefaulterData> table7 = new TableView<>();
 	
 	//menu
 	private HBox hbox;
@@ -93,6 +97,16 @@ public class Main extends Application {
         		System.out.println("exit!");
         	}
         });
+        
+       /*stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+            this.width = stage.getWidth();
+            System.out.println(this.width);
+       });
+
+       stage.heightProperty().addListener((obs, oldVal, newVal) -> {
+            this.height = stage.getHeight();
+            System.out.println(this.height);
+       });*/
         
         stage.setScene(scene1); 
         stage.setResizable(true);
@@ -194,7 +208,7 @@ public class Main extends Application {
 		
 		root1.setBottom(textFields1);
 				
-		scene1 = new Scene(root1, 1000,600); //
+		scene1 = new Scene(root1, this.width, this.height); 
 		return scene1;
 	}
 	
@@ -283,7 +297,7 @@ public class Main extends Application {
 		
 		root2.setBottom(textFields2);
 				
-		scene2 = new Scene(root2, 1000, 600);		
+		scene2 = new Scene(root2, this.width, this.height);		
 		return scene2;
 	}
 	
@@ -342,7 +356,7 @@ public class Main extends Application {
 		
 		root3.setBottom(textFields3);
 		
-		scene3 = new Scene(root3, 1000, 600);		
+		scene3 = new Scene(root3, this.width, this.height);		
 		return scene3;
 	}
 	
@@ -394,7 +408,7 @@ public class Main extends Application {
 			String tmin = minField.getText().trim();
 			String tmax = maxField.getText().trim();
 			
-			if(sql.ifKeyExists(typ, timme)) { //REFACT Anv samma lista
+			if(sql.ifKeyDagtExists(typ, timme)) { //REFACT Anv samma lista
 				//System.out.println("Finns");
 				if(tmin.isEmpty() && tmax.isEmpty()) { 
 					//delete
@@ -424,7 +438,7 @@ public class Main extends Application {
 		
 		root4.setBottom(textFields4);
 		
-		scene4 = new Scene(root4, 1000, 600);		
+		scene4 = new Scene(root4, this.width, this.height);		
 		return scene4;
 	}
 	
@@ -455,7 +469,7 @@ public class Main extends Application {
 		
 		table5.getColumns().addAll(c1, c2);
 		
-		scene5 = new Scene(root5, 1000, 600);		
+		scene5 = new Scene(root5, this.width, this.height);		
 		return scene5;
 	}
 	
@@ -464,10 +478,35 @@ public class Main extends Application {
 		
 		root6.setTop(createMenu(false, false, false, false, false, true, false));
 		
-		Label label6 = new Label("Sida 6");
-		root6.setCenter(label6);
+		HBox textFields6 = new HBox();
+		textFields6.setPadding(new Insets(10,10,10,10));
+		textFields6.setStyle("-fx-spacing: 10");
+		TextField alfaField = new TextField();
+		alfaField.setText(String.valueOf(sql.getpaaAlfa())); 
+		alfaField.setStyle("-fx-font-size: 18");
+		TextField betaField = new TextField();
+		betaField.setText(String.valueOf(sql.getavBeta())); 
+		betaField.setStyle("-fx-font-size: 18");
+		Label alfa = new Label("paaAlfa: ");
+		Label beta = new Label(" avBeta: ");
 		
-		scene6 = new Scene(root6, 1000, 600);		
+		Button updateBtn6 = new Button("Update");
+		updateBtn6.setOnAction(e -> {
+			String alfastr = alfaField.getText().trim();
+			String betastr = betaField.getText().trim();
+			
+			sql.updateAlfaBeta(alfastr, betastr);
+			alfaField.setText(String.valueOf(sql.getpaaAlfa())); 
+			betaField.setText(String.valueOf(sql.getavBeta())); 
+	
+		});
+		
+		textFields6.setAlignment(Pos.CENTER);
+		textFields6.getChildren().addAll(alfa, alfaField, beta, betaField, updateBtn6);
+
+		root6.setCenter(textFields6);
+		
+		scene6 = new Scene(root6, this.width, this.height);		
 		return scene6;
 	}
 	
@@ -476,10 +515,73 @@ public class Main extends Application {
 		
 		root7.setTop(createMenu(false, false, false, false, false, false, true));
 		
-		Label label7 = new Label("Sida 7");
-		root7.setCenter(label7);
+		root7.setCenter(table7);
+		ObservableList<DefaulterData> dataLista = FXCollections.observableArrayList(
+				sql.getDefaulterData());
+		table7.setItems(dataLista);
 		
-		scene7 = new Scene(root7, 1000, 600);		
+		TableColumn<DefaulterData, String> c1 = new TableColumn<>("xdefaulter");
+		c1.setCellValueFactory(new PropertyValueFactory<>("xdefaulter"));
+		TableColumn<DefaulterData, String> c2 = new TableColumn<>("typ");
+		c2.setCellValueFactory(new PropertyValueFactory<>("typ"));
+		TableColumn<DefaulterData, Integer> c3 = new TableColumn<>("varde");
+		c3.setCellValueFactory(new PropertyValueFactory<>("varde"));
+
+		table7.getColumns().addAll(c1, c2, c3);
+		
+		HBox textFields7 = new HBox();
+		textFields7.setPadding(new Insets(10,10,10,10));
+		textFields7.setStyle("-fx-spacing: 5");
+		TextField defaultField = new TextField();
+		//defaultField.setPromptText("default");
+		//dateField.setStyle("-fx-font-size: 18");
+		TextField typField = new TextField();
+		//typField.setPromptText("typ");
+		//tidField.setStyle("-fx-font-size: 18");
+		TextField vardeField = new TextField();
+		vardeField.setPromptText("0.0");
+		//idField.setStyle("-fx-font-size: 18");
+		Label defaulter = new Label("xdefault:");
+		Label typ = new Label("typ:");
+		Label varde = new Label("varde:");
+		
+		Button updateBtn7 = new Button("Update");
+		//funktion
+		updateBtn7.setOnAction(e -> {
+			String typstr = typField.getText().trim();
+			String defaultstr = defaultField.getText().trim();
+			String vardestr = vardeField.getText().trim();
+			
+			if(sql.ifKeyDefaulterExists(typstr)) {
+				if(defaultstr.isEmpty() && vardestr.isEmpty()) {
+					//delete
+					sql.deleteDefaulterData(typstr);
+					ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
+							sql.getDefaulterData());
+					table7.setItems(newDataLista);
+				} else {
+					//update
+					sql.updateDefaulterData(defaultstr, typstr, vardestr);
+					ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
+							sql.getDefaulterData());
+					table7.setItems(newDataLista);
+				}
+			} else {
+				//insert
+				sql.insertDefaulterData(defaultstr, typstr, vardestr);
+				ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
+						sql.getDefaulterData());
+				table7.setItems(newDataLista);
+			}
+			
+		});
+		
+		textFields7.setAlignment(Pos.CENTER);
+		textFields7.getChildren().addAll(defaulter, defaultField, typ, typField, varde, vardeField, updateBtn7);
+		
+		root7.setBottom(textFields7);
+		
+		scene7 = new Scene(root7, this.width, this.height);		
 		return scene7;
 	}
 	
