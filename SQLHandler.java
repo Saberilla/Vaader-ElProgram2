@@ -59,6 +59,78 @@ public void closeConnection(){
 	
 }
 
+	public List<DefaulterData> getDefaulterData(){
+		
+		List<DefaulterData> list = new ArrayList<>();
+		try {
+			
+			String sql;
+			sql = "SELECT xdefault,typ,varde FROM Defaulter;";
+			
+			//System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				String defaulter = rs.getString("xdefault");
+				String typ = rs.getString("typ");
+				double varde = rs.getDouble("varde");
+								
+				list.add(new DefaulterData(defaulter, typ, varde));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Collections.unmodifiableList(list);
+		
+	}
+	
+	public void insertDefaulterData(String defaulter, String typ, String varde) {
+		
+		try {
+
+			String sql;
+			sql = "INSERT INTO Defaulter (xdefault,typ,varde) VALUES (" + "'" + defaulter+
+					"'" + "," + "'" + typ + "'" + "," + varde + ");";
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void updateDefaulterData(String defaulter, String typ, String varde) {
+		
+		try {
+
+			String sql;
+			sql = "UPDATE Defaulter SET xdefault=" + "'" + defaulter + "'" + ",varde=" + varde + " where typ=" + "'" + typ + "'" + ";";
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void deleteDefaulterData(String typ) {
+		try {
+
+			String sql;
+			sql = "DELETE FROM Defaulter where typ=" + "'" + typ + "'"  +  ";";
+			rs = stmt.executeQuery(sql);
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public List<KalenderData> getKalenderData(){
 		
 		List<KalenderData> list = new ArrayList<>();
@@ -176,7 +248,35 @@ public void closeConnection(){
 		
 	}
 	
-	public boolean ifKeyExists(String dagtyp, String timme) {
+	public boolean ifKeyDefaulterExists(String typ) {
+		boolean exists = false;
+		
+		try {
+
+			String sql = "SELECT typ FROM Defaulter WHERE typ=" + "'" + typ + "'" + ";";
+			
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+
+				String typstr = rs.getString("typ");
+				
+				if (typ.equals(typstr)) {
+					exists = true;
+				}
+			}
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+
+		return exists;
+		
+		
+	}
+	
+	public boolean ifKeyDagtExists(String dagtyp, String timme) {
 		boolean exists = false;
 		
 		try {
@@ -394,7 +494,7 @@ public void closeConnection(){
 		
 	}
 	
-	private double getavBeta() {
+	public double getavBeta() {
 		double avBeta = 0;
 		try {
 			
@@ -412,7 +512,7 @@ public void closeConnection(){
 		return avBeta;
 	}
 	
-	private double getpaaAlfa() {
+	public double getpaaAlfa() {
 		double paaAlfa = 0;
 		try {
 			
@@ -428,6 +528,18 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		return paaAlfa;
+	}
+	
+	public void updateAlfaBeta(String alfa, String beta) {
+		try {
+			
+			String sql;
+			sql = "UPDATE Parametrar SET paaAlfa=" + alfa + ",avBeta=" + beta + ";";
+			rs = stmt.executeQuery(sql);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private String createSimDataStatement(String date, String timme, String id) {
