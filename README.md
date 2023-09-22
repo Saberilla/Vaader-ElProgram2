@@ -1,5 +1,5 @@
 # Vaader-ElProgram2
-Home Optimization Project for lowest energy costs. The USP is that we use the isolated house to minimize energycosts.
+Home Optimization Project for lowest energy costs. The USP is that we use the isolated house as a heat battery to minimize energycosts.
 
 This repo is an user interface created for the database for easier maintenance and interaction with the optimization program in the Vaader-ElOptimering repo. 
 
