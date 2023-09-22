@@ -5,19 +5,18 @@ public class Data {
 	private Date date;
 	private int timme;
 	private double kostnad;
+	private double temp;
 	private int tmin;
 	private int tmax;
-	private double tempUpp;
-	private double tempNed;
 	
-	public Data(Date date, int timme, double kostnad, int tmin, int tmax, double tempUpp, double tempNed) {
+	
+	public Data(Date date, int timme, double kostnad, double temp, int tmin, int tmax) {
 		this.date = date;
 		this.timme = timme;
 		this.kostnad = kostnad;
 		this.tmin = tmin;	
 		this.tmax = tmax;
-		this.tempUpp = tempUpp;
-		this.tempNed = tempNed;
+		this.temp = temp;
 	}
 	
 	public Date getDate() {
@@ -40,12 +39,9 @@ public class Data {
 		return this.tmax;
 	}
 	
-	public double getTempUpp() {
-		return this.tempUpp;
-	}
-	
-	public double getTempNed() {
-		return this.tempNed;
+
+	public double getTemp() {
+		return temp;
 	}
 
 }

@@ -89,6 +89,8 @@ public class Main extends Application {
         scene6 = createScene6();
         scene7 = createScene7();
         
+        
+        
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         	@Override
             public void handle(WindowEvent e) {
@@ -163,23 +165,20 @@ public class Main extends Application {
 		TableColumn<Data, Integer> c2 = new TableColumn<>("timme");
 		c2.setCellValueFactory(new PropertyValueFactory<>("timme"));
 		
-		TableColumn<Data, Double> c3 = new TableColumn<>("pris");
+		TableColumn<Data, Double> c3 = new TableColumn<>("SMHIpris");
 		c3.setCellValueFactory(new PropertyValueFactory<>("kostnad"));
 		
-		TableColumn<Data, Double> c4 = new TableColumn<>("tmin");
-		c4.setCellValueFactory(new PropertyValueFactory<>("tmin"));
+		TableColumn<Data, Double> c4 = new TableColumn<>("SMHItemp");
+		c4.setCellValueFactory(new PropertyValueFactory<>("temp"));
 		
-		TableColumn<Data, Double> c5 = new TableColumn<>("tmax");
-		c5.setCellValueFactory(new PropertyValueFactory<>("tmax"));
+		TableColumn<Data, Integer> c5 = new TableColumn<>("tmin");
+		c5.setCellValueFactory(new PropertyValueFactory<>("tmin"));
 		
-		TableColumn<Data, Integer> c6 = new TableColumn<>("tempNed");
-		c6.setCellValueFactory(new PropertyValueFactory<>("tempNed"));
+		TableColumn<Data, Integer> c6 = new TableColumn<>("tmax");
+		c6.setCellValueFactory(new PropertyValueFactory<>("tmax"));
+
 		
-		TableColumn<Data, Integer> c7 = new TableColumn<>("tempUpp");
-		c7.setCellValueFactory(new PropertyValueFactory<>("tempUpp"));
-		
-		
-		table1.getColumns().addAll(c1, c2, c3, c4, c5, c6, c7);
+		table1.getColumns().addAll(c1, c2, c3, c4, c5, c6);
 		
 		//TextFields datum
 		HBox textFields1 = new HBox();

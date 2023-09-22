@@ -413,14 +413,14 @@ public void closeConnection(){
 			while(rs.next()) {
 				
 				Date date = rs.getDate("data_date");
-				int timme = rs.getInt("timme"); 
+				int timme = rs.getInt("SMHItimme");
+				double temp = rs.getDouble("SMHItemp");
 				double kost = rs.getDouble("NORDPpris");
 				int tmin = rs.getInt("Tmin");
 				int tmax = rs.getInt("Tmax");
-				double tempupp = rs.getDouble("tempUpp");
-				double tempned = rs.getDouble("tempNed");
+
 				
-				list.add(new Data(date, timme, kost, tmin, tmax, tempupp, tempned));
+				list.add(new Data(date, timme, kost, temp, tmin, tmax));
 			}
 			
 		} catch (SQLException e) {
@@ -430,6 +430,19 @@ public void closeConnection(){
 		return Collections.unmodifiableList(list); 
 		
 	}
+	
+	
+	private String createBetweenDatesStatement(String dateFrom, String dateTo) {
+		StringBuilder str = new StringBuilder();
+		
+		str.append("select a.data_date, b.SMHItimme, b.SMHItemp, c.NORDPpris, d.Tmax, d.Tmin from Kalender a\n"
+				+ "join (SMHI b, NORDP c, Dagtyp d) on (a.data_date=b.data_date and a.data_date=c.data_date and b.SMHItimme=c.NORDPtimme \n"
+				+ "and b.SMHItimme=d.timme and a.dagtyp=d.dagtyp)\n"
+				+ "where a.data_date>=" +
+				dateFrom + " and a.data_date<=" + dateTo + ";");
+		return str.toString();
+	
+		}
 	
 	public List<SimData> getSimData(String date, String timme, String id, String temp) {
 	
@@ -587,20 +600,6 @@ public void closeConnection(){
 	}
 	
 
-	private String createBetweenDatesStatement(String dateFrom, String dateTo) {
-		StringBuilder str = new StringBuilder();
-		
-		str.append("SELECT f.data_date,g.timme,c.NORDPpris,g.Tmin,g.Tmax,(g.Tmin-e.SMHItemp)*d.avBeta as TempNed,d.paaAlfa-(g.Tmin-e.SMHItemp)*d.avBeta as TempUpp\n"
-				+ "FROM (Parametrar d, Kalender f)  \n"
-				+ "JOIN (Dagtyp g,NORDP c,SMHI e)  \n"
-				+ "ON (f.dagtyp=g.dagtyp and c.data_date=f.data_date and g.timme = c.NORDPtimme  and c.data_date=e.data_date and g.timme = e.SMHItimme )  \n"
-				+ "where  f.data_date>=");	
-		str.append(dateFrom);
-		str.append(" and  f.data_date<=");
-		str.append(dateTo + "\n");
-		str.append("ORDER BY f.data_date,g.timme;");
-		return str.toString();
 	
-		}
 
 }
