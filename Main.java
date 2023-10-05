@@ -18,7 +18,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -26,6 +25,11 @@ import javafx.util.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.converter.IntegerStringConverter;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.layout.StackPane;
  
 public class Main extends Application {
 	
@@ -52,6 +56,7 @@ public class Main extends Application {
 	private Button kalBtn;
 	private Button parBtn;
 	private Button defBtn;
+	private Button statBtn;
 	
 	private Scene scene1;
 	private BorderPane root1;
@@ -73,6 +78,9 @@ public class Main extends Application {
 	
 	private Scene scene7;
 	private BorderPane root7;
+	
+	private Scene scene8;
+	private BorderPane root8;
 
 	
 	@Override
@@ -88,6 +96,7 @@ public class Main extends Application {
         scene5 = createScene5();
         scene6 = createScene6();
         scene7 = createScene7();
+        scene8 = createScene8();
         
         
         
@@ -145,7 +154,7 @@ public class Main extends Application {
 
 		root1.setTop(hbox1);*/
 		
-		root1.setTop(createMenu(true, false, false, false, false, false, false));
+		root1.setTop(createMenu(true, false, false, false, false, false, false, false));
 		
 		//TableView
 		/*ObservableList<Data> dataLista = FXCollections.observableArrayList(
@@ -215,7 +224,7 @@ public class Main extends Application {
 		//huvudroten
 		root2 = new BorderPane();
 				
-		root2.setTop(createMenu(false, true, false, false, false, false, false));
+		root2.setTop(createMenu(false, true, false, false, false, false, false, false));
 
 		//tableview
 		root2.setCenter(table2);
@@ -303,7 +312,7 @@ public class Main extends Application {
 	private Scene createScene3() { //RESULTAT
 		root3 = new BorderPane();
 
-		root3.setTop(createMenu(false, false, true, false, false, false, false));
+		root3.setTop(createMenu(false, false, true, false, false, false, false, false));
 		
 		root3.setCenter(table3);
 		
@@ -361,7 +370,7 @@ public class Main extends Application {
 	
 	private Scene createScene4() { //DAGTYP
 		root4 = new BorderPane();
-		root4.setTop(createMenu(false, false, false, true, false, false , false));
+		root4.setTop(createMenu(false, false, false, true, false, false , false, false));
 		
 		root4.setCenter(table4);
 		ObservableList<DagtData> dataLista = FXCollections.observableArrayList(
@@ -444,7 +453,7 @@ public class Main extends Application {
 	private Scene createScene5() {
 		root5 = new BorderPane();
 
-		root5.setTop(createMenu(false, false, false, false, true, false ,false));
+		root5.setTop(createMenu(false, false, false, false, true, false ,false, false));
 		
 		root5.setCenter(table5);
 		ObservableList<KalenderData> dataLista = FXCollections.observableArrayList(
@@ -475,7 +484,7 @@ public class Main extends Application {
 	private Scene createScene6() {
 		root6 = new BorderPane();
 		
-		root6.setTop(createMenu(false, false, false, false, false, true, false));
+		root6.setTop(createMenu(false, false, false, false, false, true, false, false));
 		
 		HBox textFields6 = new HBox();
 		textFields6.setPadding(new Insets(10,10,10,10));
@@ -512,7 +521,7 @@ public class Main extends Application {
 	private Scene createScene7() {
 		root7 = new BorderPane();
 		
-		root7.setTop(createMenu(false, false, false, false, false, false, true));
+		root7.setTop(createMenu(false, false, false, false, false, false, true, false));
 		
 		root7.setCenter(table7);
 		ObservableList<DefaulterData> dataLista = FXCollections.observableArrayList(
@@ -584,7 +593,30 @@ public class Main extends Application {
 		return scene7;
 	}
 	
-	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def) {
+	private Scene createScene8() {
+		root8 = new BorderPane();
+		root8.setTop(createMenu(false, false, false, false, false, false, false, true));
+		
+		//Graph
+		CategoryAxis xAxis = new CategoryAxis();
+		xAxis.setLabel("Datum");
+	    NumberAxis yAxis = new NumberAxis();
+	    yAxis.setLabel("Temperatur C°");
+	    
+	    LineChart<String, Number> graph = new LineChart<String, Number>(xAxis, yAxis);
+	    
+	    StackPane pane = new StackPane(graph);
+	    pane.setPadding(new Insets(15, 15, 15, 15));
+	    //graph.setStyle("-fx-background-color: WHITE");
+		
+		Label label = new Label("stats");
+		root8.setCenter(pane);
+		
+		scene8 = new Scene(root8, this.width, this.height);
+		return scene8;
+	}
+	
+	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def, Boolean stat) {
 		hbox = new HBox(10);
 		hbox.setPadding(new Insets(10,10,10,10));
 						
@@ -609,6 +641,9 @@ public class Main extends Application {
 		defBtn = new Button("Defaulter");
 		defBtn.setOnAction(e -> switchScenes(scene7));
 		defBtn.setDisable(def);
+		statBtn = new Button("Stats");
+		statBtn.setOnAction(e -> switchScenes(scene8));
+		statBtn.setDisable(stat);
 		
 		
 		hbox.getChildren().add(dagBtn);
@@ -618,6 +653,7 @@ public class Main extends Application {
 		hbox.getChildren().add(kalBtn);
 		hbox.getChildren().add(parBtn);
 		hbox.getChildren().add(defBtn);
+		hbox.getChildren().add(statBtn);
 		
 		return hbox;
 	}
