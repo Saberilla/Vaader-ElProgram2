@@ -1,5 +1,7 @@
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -56,7 +58,7 @@ public class Main extends Application {
 	private Button kalBtn;
 	private Button parBtn;
 	private Button defBtn;
-	private Button statBtn;
+	private Button grafBtn;
 	
 	private Scene scene1;
 	private BorderPane root1;
@@ -605,18 +607,32 @@ public class Main extends Application {
 	    
 	    LineChart<String, Number> graph = new LineChart<String, Number>(xAxis, yAxis);
 	    
+	    //HDMIGRAFEN
+	    XYChart.Series SMHIgraph = new XYChart.Series();
+	    Map<String, Integer> HSMHIdata = sql.geSMHIBetweenDates("20230810", "20230811"); //ändra datum
+	    
+	    for (Map.Entry<String,Integer> entry : HSMHIdata.entrySet()) {
+	    	 SMHIgraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+	    }
+	    
+	    //NäSTAGRAF
+	    
+	    //namnge grafer
+	    SMHIgraph.setName("SMHI");
+	    graph.getData().addAll(SMHIgraph); //lägg rill i grafen
+	    
 	    StackPane pane = new StackPane(graph);
 	    pane.setPadding(new Insets(15, 15, 15, 15));
 	    //graph.setStyle("-fx-background-color: WHITE");
 		
-		Label label = new Label("stats");
+		Label label = new Label("Graf");
 		root8.setCenter(pane);
 		
 		scene8 = new Scene(root8, this.width, this.height);
 		return scene8;
 	}
 	
-	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def, Boolean stat) {
+	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def, Boolean graf) {
 		hbox = new HBox(10);
 		hbox.setPadding(new Insets(10,10,10,10));
 						
@@ -641,9 +657,9 @@ public class Main extends Application {
 		defBtn = new Button("Defaulter");
 		defBtn.setOnAction(e -> switchScenes(scene7));
 		defBtn.setDisable(def);
-		statBtn = new Button("Stats");
-		statBtn.setOnAction(e -> switchScenes(scene8));
-		statBtn.setDisable(stat);
+		grafBtn = new Button("Graf");
+		grafBtn.setOnAction(e -> switchScenes(scene8));
+		grafBtn.setDisable(graf);
 		
 		
 		hbox.getChildren().add(dagBtn);
@@ -653,7 +669,7 @@ public class Main extends Application {
 		hbox.getChildren().add(kalBtn);
 		hbox.getChildren().add(parBtn);
 		hbox.getChildren().add(defBtn);
-		hbox.getChildren().add(statBtn);
+		hbox.getChildren().add(grafBtn);
 		
 		return hbox;
 	}
