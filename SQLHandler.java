@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.DecimalFormat;
@@ -443,6 +445,58 @@ public void closeConnection(){
 		return str.toString();
 	
 		}
+	
+	//GRAFHDMI
+	public Map<String, Integer> geSMHIBetweenDates(String fromDate, String toDate){
+			
+		Map<String, Integer> SMHIdata = new HashMap<String, Integer>();
+		StringBuilder str = new StringBuilder();
+		
+		try {
+			
+			String sql;
+			sql = createSMHIBetweenDatesStatement(fromDate, toDate);
+			//System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				Date date = rs.getDate("date");
+				int timme = rs.getInt("hour");
+				//double temp = rs.getDouble("SMHItemp");
+				int temp = rs.getInt("temp");
+				
+				SMHIdata.put(createDateWithHour(date, timme), temp);
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Collections.unmodifiableMap(SMHIdata); 
+			
+			
+	}
+	
+	private String createDateWithHour(Date date, int hour) {
+		StringBuilder str = new StringBuilder();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd"); 
+        String strDate = formatter.format(date);
+        String strHour = Integer.toString(hour);
+        str.append(strDate + strHour);
+		return str.toString();
+	}
+	
+	
+	private String createSMHIBetweenDatesStatement(String fromDate, String toDate) {
+		StringBuilder str = new StringBuilder();
+		
+		str.append("select data_date as Date, SMHItimme as Hour , SMHItemp  as Temp from SMHI where"
+				+ " data_date between "+ fromDate + " and " + toDate +";");
+		return str.toString();
+		
+	}
 	
 	public List<SimData> getSimData(String date, String timme, String id, String temp) {
 	
