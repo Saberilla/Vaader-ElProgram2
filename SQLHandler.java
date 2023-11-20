@@ -446,8 +446,8 @@ public void closeConnection(){
 	
 		}
 	
-	//GRAFHDMI
-	public Map<String, Integer> geSMHIBetweenDates(String fromDate, String toDate){
+	//GRAF HDMI
+	public Map<String, Integer> getSMHIBetweenDates(String fromDate, String toDate){
 			
 		Map<String, Integer> SMHIdata = new HashMap<String, Integer>();
 		StringBuilder str = new StringBuilder();
@@ -479,16 +479,7 @@ public void closeConnection(){
 			
 	}
 	
-	private String createDateWithHour(Date date, int hour) {
-		StringBuilder str = new StringBuilder();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd"); 
-        String strDate = formatter.format(date);
-        String strHour = Integer.toString(hour);
-        str.append(strDate + strHour);
-		return str.toString();
-	}
-	
-	
+		
 	private String createSMHIBetweenDatesStatement(String fromDate, String toDate) {
 		StringBuilder str = new StringBuilder();
 		
@@ -496,6 +487,133 @@ public void closeConnection(){
 				+ " data_date between "+ fromDate + " and " + toDate +";");
 		return str.toString();
 		
+	}
+	
+	//GRAF OPTIMERING
+	public Map<String, Integer> getOptBetweenDates(String fromDate, String toDate){
+		
+		Map<String, Integer> Optdata = new HashMap<String, Integer>();
+		StringBuilder str = new StringBuilder();
+		
+		try {
+			
+			String sql;
+			sql = createOptBetweenDatesStatement(fromDate, toDate);
+			//System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				Date date = rs.getDate("date");
+				int timme = rs.getInt("hour");
+				int temp = rs.getInt("temp");
+				
+				Optdata.put(createDateWithHour(date, timme), temp);
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Collections.unmodifiableMap(Optdata); 
+				
+	}
+	
+	private String createOptBetweenDatesStatement(String fromDate, String toDate) {
+		StringBuilder str = new StringBuilder();
+		str.append("select data_date as Date, Rtimme as Hour, Rtemp as Temp from "
+				+ "resultat where Rmin=0 and not typ='TOSP' and data_date between "+ fromDate + " and " + toDate +";");
+		return str.toString();
+		
+	}
+	
+	//UTOMHUSTEMP GRAF
+	public Map<String, Integer> getUtempBetweenDates(String fromDate, String toDate){
+		
+		Map<String, Integer> utempData = new HashMap<String, Integer>();
+		StringBuilder str = new StringBuilder();
+		
+		try {
+			
+			String sql;
+			sql = createUtempBetweenDatesStatement(fromDate, toDate);
+			//System.out.println(sql + "!");
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				Date date = rs.getDate("date");
+				int timme = rs.getInt("hour");
+				int temp = rs.getInt("temp");
+				
+				utempData.put(createDateWithHour(date, timme), temp);
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Collections.unmodifiableMap(utempData); 
+				
+	}
+	
+	private String createUtempBetweenDatesStatement(String fromDate, String toDate) {
+		StringBuilder str = new StringBuilder();
+		str.append("select DATE_FORMAT(mattid, \"%Y-%m-%d\") as Date, DATE_FORMAT(mattid, \"%H\") as Hour, avg(ute) as Temp "
+				+ "from Matdata where DATE_FORMAT(mattid, \"%Y%m%d\")between "+ fromDate + " and " + toDate 
+				+" group by DATE_FORMAT(mattid, \"%Y%m%d\"), Hour;");
+		return str.toString();
+	}
+	
+	//INNETEMP GRAF
+	public Map<String, Integer> getItempBetweenDates(String fromDate, String toDate){
+		
+		Map<String, Integer> itempData = new HashMap<String, Integer>();
+		StringBuilder str = new StringBuilder();
+		
+		try {
+			
+			String sql;
+			sql = createItempBetweenDatesStatement(fromDate, toDate);
+			//System.out.println(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				Date date = rs.getDate("date");
+				int timme = rs.getInt("hour");
+				int temp = rs.getInt("temp");
+				
+				itempData.put(createDateWithHour(date, timme), temp);
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return Collections.unmodifiableMap(itempData); 
+				
+	}
+	
+	private String createItempBetweenDatesStatement(String fromDate, String toDate) {
+		StringBuilder str = new StringBuilder();
+		str.append("select DATE_FORMAT(mattid, \"%Y-%m-%d\") as Date, DATE_FORMAT(mattid, \"%H\") as Hour, avg(inne) as Temp  \n"
+				+ "from Matdata where DATE_FORMAT(mattid, \"%Y%m%d\") between "+ fromDate + " and " + toDate 
+				+" group by DATE_FORMAT(mattid, \"%Y%m%d\"), Hour;");
+		return str.toString();
+	}
+	
+	
+	private String createDateWithHour(Date date, int hour) {
+		StringBuilder str = new StringBuilder();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd"); 
+        String strDate = formatter.format(date);
+        String strHour = Integer.toString(hour);
+        str.append(strDate + strHour);
+		return str.toString();
 	}
 	
 	public List<SimData> getSimData(String date, String timme, String id, String temp) {

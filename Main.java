@@ -609,17 +609,39 @@ public class Main extends Application {
 	    
 	    //HDMIGRAFEN
 	    XYChart.Series SMHIgraph = new XYChart.Series();
-	    Map<String, Integer> HSMHIdata = sql.geSMHIBetweenDates("20230810", "20230811"); //ändra datum
+	    Map<String, Integer> HSMHIdata = sql.getSMHIBetweenDates("20230810", "20230811"); //ändra datum
 	    
 	    for (Map.Entry<String,Integer> entry : HSMHIdata.entrySet()) {
 	    	 SMHIgraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
-	    //NäSTAGRAF
+	    //OPTGRAF
+	    XYChart.Series OptGraph = new XYChart.Series();
+	    Map<String, Integer> OptData = sql.getOptBetweenDates("20230810", "20230811");
+	    for (Map.Entry<String,Integer> entry : OptData.entrySet()) {
+	    	 OptGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+	    }
+	    
+	    //UTEMPGRAF
+	    XYChart.Series utempGraph = new XYChart.Series();
+	    Map<String, Integer> utempData = sql.getUtempBetweenDates("20230810", "20230811");
+	    for (Map.Entry<String,Integer> entry : utempData.entrySet()) {
+	    	 utempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+	    }
+	    
+	    //INNETEMPGRAF
+	    XYChart.Series itempGraph = new XYChart.Series();
+	    Map<String, Integer> itempData = sql.getItempBetweenDates("20230810", "20230811");
+	    for (Map.Entry<String,Integer> entry : itempData.entrySet()) {
+	    	 itempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+	    }
 	    
 	    //namnge grafer
 	    SMHIgraph.setName("SMHI");
-	    graph.getData().addAll(SMHIgraph); //lägg rill i grafen
+	    OptGraph.setName("Optimering");
+	    utempGraph.setName("UteTemp");
+	    itempGraph.setName("InneTemp");
+	    graph.getData().addAll(SMHIgraph, OptGraph, utempGraph, itempGraph); 
 	    
 	    StackPane pane = new StackPane(graph);
 	    pane.setPadding(new Insets(15, 15, 15, 15));
