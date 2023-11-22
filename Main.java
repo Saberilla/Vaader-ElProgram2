@@ -1,4 +1,6 @@
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -609,7 +611,7 @@ public class Main extends Application {
 	    
 	    //HDMIGRAFEN
 	    XYChart.Series SMHIgraph = new XYChart.Series();
-	    Map<String, Integer> HSMHIdata = sql.getSMHIBetweenDates("20230810", "20230811"); //ändra datum
+	    Map<String, Integer> HSMHIdata = sql.getSMHIBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST()); //ändra 
 	    
 	    for (Map.Entry<String,Integer> entry : HSMHIdata.entrySet()) {
 	    	 SMHIgraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
@@ -617,21 +619,21 @@ public class Main extends Application {
 	    
 	    //OPTGRAF
 	    XYChart.Series OptGraph = new XYChart.Series();
-	    Map<String, Integer> OptData = sql.getOptBetweenDates("20230810", "20230811");
+	    Map<String, Integer> OptData = sql.getOptBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
 	    for (Map.Entry<String,Integer> entry : OptData.entrySet()) {
 	    	 OptGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
 	    //UTEMPGRAF
 	    XYChart.Series utempGraph = new XYChart.Series();
-	    Map<String, Integer> utempData = sql.getUtempBetweenDates("20230810", "20230811");
+	    Map<String, Integer> utempData = sql.getUtempBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
 	    for (Map.Entry<String,Integer> entry : utempData.entrySet()) {
 	    	 utempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
 	    //INNETEMPGRAF
 	    XYChart.Series itempGraph = new XYChart.Series();
-	    Map<String, Integer> itempData = sql.getItempBetweenDates("20230810", "20230811");
+	    Map<String, Integer> itempData = sql.getItempBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
 	    for (Map.Entry<String,Integer> entry : itempData.entrySet()) {
 	    	 itempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
@@ -650,8 +652,65 @@ public class Main extends Application {
 		Label label = new Label("Graf");
 		root8.setCenter(pane);
 		
+		//text fält
+		HBox textFields8 = new HBox();
+		textFields8.setPadding(new Insets(10,10,10,10));
+		textFields8.setStyle("-fx-spacing: 5");
+		
+		TextField fromField = new TextField( getOneWeekAgoDateTEST()); //ändra
+		fromField.setStyle("-fx-font-size: 18");
+		TextField toField = new TextField(getCurrentDateTEST()); //ändra
+		toField.setStyle("-fx-font-size: 18");
+		Label dash = new Label("—");
+		
+		//Update Button
+		Button updateBtn8 = new Button("Update");
+		//Funktion
+		
+		textFields8.setAlignment(Pos.CENTER);
+		textFields8.getChildren().addAll(fromField, dash, toField, updateBtn8 );
+		
+		root8.setBottom(textFields8);
+		
 		scene8 = new Scene(root8, this.width, this.height);
 		return scene8;
+	}
+	
+	private String getCurrentDateTEST() { 
+		//System.out.println(getCurrentDate()); //TEST
+		return "20230811";
+	}
+	
+	private String getOneWeekAgoDateTEST() {
+		//System.out.println(getOneWeekAgoDate()); //TEST
+		return "20230810";
+	}
+	
+	private String getCurrentDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		 String strDate = "";
+		
+		 Date todayDate = new Date();
+		 strDate = formatter.format(todayDate);
+		 return strDate;
+	}
+	
+	private String getOneWeekAgoDate() { 
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		String strDate = "";
+		
+		Date todayDate = new Date(); //NU TID
+
+		final int DAYS = -7; 
+				
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(todayDate);
+		calendar2.add(Calendar.DAY_OF_MONTH, DAYS); //add one hour	    
+		Date newDate = calendar2.getTime();
+		
+		strDate = formatter.format(newDate);
+				
+		return strDate;
 	}
 	
 	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def, Boolean graf) {
