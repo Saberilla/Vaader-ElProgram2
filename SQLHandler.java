@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.DecimalFormat;
@@ -449,9 +451,8 @@ public void closeConnection(){
 	//GRAF HDMI
 	public Map<String, Integer> getSMHIBetweenDates(String fromDate, String toDate){
 			
-		Map<String, Integer> SMHIdata = new HashMap<String, Integer>();
-		StringBuilder str = new StringBuilder();
-		
+		Map<String, Integer> SMHIdata = new LinkedHashMap<String, Integer>();
+
 		try {
 			
 			String sql;
@@ -466,6 +467,7 @@ public void closeConnection(){
 				//double temp = rs.getDouble("SMHItemp");
 				int temp = rs.getInt("temp");
 				
+				//int dateWithHour = Integer.valueOf(createDateWithHour(date, timme));
 				SMHIdata.put(createDateWithHour(date, timme), temp);
 
 			}
@@ -475,7 +477,6 @@ public void closeConnection(){
 		}
 		
 		return Collections.unmodifiableMap(SMHIdata); 
-			
 			
 	}
 	
@@ -492,8 +493,7 @@ public void closeConnection(){
 	//GRAF OPTIMERING
 	public Map<String, Integer> getOptBetweenDates(String fromDate, String toDate){
 		
-		Map<String, Integer> Optdata = new HashMap<String, Integer>();
-		StringBuilder str = new StringBuilder();
+		Map<String, Integer> Optdata = new LinkedHashMap<String, Integer>();
 		
 		try {
 			
@@ -516,6 +516,7 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		
+
 		return Collections.unmodifiableMap(Optdata); 
 				
 	}
@@ -531,8 +532,7 @@ public void closeConnection(){
 	//UTOMHUSTEMP GRAF
 	public Map<String, Integer> getUtempBetweenDates(String fromDate, String toDate){
 		
-		Map<String, Integer> utempData = new HashMap<String, Integer>();
-		StringBuilder str = new StringBuilder();
+		Map<String, Integer> utempData = new LinkedHashMap<String, Integer>();
 		
 		try {
 			
@@ -570,8 +570,7 @@ public void closeConnection(){
 	//INNETEMP GRAF
 	public Map<String, Integer> getItempBetweenDates(String fromDate, String toDate){
 		
-		Map<String, Integer> itempData = new HashMap<String, Integer>();
-		StringBuilder str = new StringBuilder();
+		Map<String, Integer> itempData = new LinkedHashMap<String, Integer>();
 		
 		try {
 			
@@ -594,7 +593,8 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		
-		return Collections.unmodifiableMap(itempData); 
+		
+		return Collections.unmodifiableMap(itempData);  //itempData
 				
 	}
 	
