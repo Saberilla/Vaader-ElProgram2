@@ -609,31 +609,32 @@ public class Main extends Application {
 	    
 	    LineChart<String, Number> graph = new LineChart<String, Number>(xAxis, yAxis);
 	    
+
+	    
 	    //HDMIGRAFEN
 	    XYChart.Series SMHIgraph = new XYChart.Series();
-	    Map<String, Integer> HSMHIdata = sql.getSMHIBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST()); //ändra 
-	    
+	    Map<String, Integer> HSMHIdata = sql.getSMHIBetweenDates(getOneWeekAgoDate(), getCurrentDate()); //TEST 
 	    for (Map.Entry<String,Integer> entry : HSMHIdata.entrySet()) {
-	    	 SMHIgraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+	    	SMHIgraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
 	    //OPTGRAF
 	    XYChart.Series OptGraph = new XYChart.Series();
-	    Map<String, Integer> OptData = sql.getOptBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
+	    Map<String, Integer> OptData = sql.getOptBetweenDates(getOneWeekAgoDate(), getCurrentDate()); //TEST
 	    for (Map.Entry<String,Integer> entry : OptData.entrySet()) {
 	    	 OptGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
 	    //UTEMPGRAF
 	    XYChart.Series utempGraph = new XYChart.Series();
-	    Map<String, Integer> utempData = sql.getUtempBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
+	    Map<String, Integer> utempData = sql.getUtempBetweenDates(getOneWeekAgoDate(), getCurrentDate()); //TEST
 	    for (Map.Entry<String,Integer> entry : utempData.entrySet()) {
 	    	 utempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
 	    
 	    //INNETEMPGRAF
 	    XYChart.Series itempGraph = new XYChart.Series();
-	    Map<String, Integer> itempData = sql.getItempBetweenDates(getOneWeekAgoDateTEST(), getCurrentDateTEST());
+	    Map<String, Integer> itempData = sql.getItempBetweenDates(getOneWeekAgoDate(), getCurrentDate()); //TEST
 	    for (Map.Entry<String,Integer> entry : itempData.entrySet()) {
 	    	 itempGraph.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
 	    }
@@ -649,7 +650,6 @@ public class Main extends Application {
 	    pane.setPadding(new Insets(15, 15, 15, 15));
 	    //graph.setStyle("-fx-background-color: WHITE");
 		
-		Label label = new Label("Graf");
 		root8.setCenter(pane);
 		
 		//text fält
@@ -657,15 +657,62 @@ public class Main extends Application {
 		textFields8.setPadding(new Insets(10,10,10,10));
 		textFields8.setStyle("-fx-spacing: 5");
 		
-		TextField fromField = new TextField( getOneWeekAgoDateTEST()); //ändra
+		TextField fromField = new TextField( getOneWeekAgoDate()); //TEST
 		fromField.setStyle("-fx-font-size: 18");
-		TextField toField = new TextField(getCurrentDateTEST()); //ändra
+		TextField toField = new TextField(getCurrentDate()); //TEST
 		toField.setStyle("-fx-font-size: 18");
 		Label dash = new Label("—");
 		
 		//Update Button
 		Button updateBtn8 = new Button("Update");
 		//Funktion
+		updateBtn8.setOnAction(e -> {
+			String fromFieldstr = fromField.getText().trim();
+			String toFieldstr = toField.getText().trim();
+			
+			
+			
+			graph.getData().clear();
+			
+			 //HDMIGRAFEN
+		    XYChart.Series SMHIgraph2 = new XYChart.Series();
+		    Map<String, Integer> HSMHIdata2 = sql.getSMHIBetweenDates(fromFieldstr, toFieldstr); 
+		    
+		    for (Map.Entry<String,Integer> entry : HSMHIdata2.entrySet()) {
+		    	 SMHIgraph2.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+		    }
+		    
+		    //OPTGRAF
+		    XYChart.Series OptGraph2 = new XYChart.Series();
+		    Map<String, Integer> OptData2 = sql.getOptBetweenDates(fromFieldstr, toFieldstr);
+		    for (Map.Entry<String,Integer> entry : OptData2.entrySet()) {
+		    	 OptGraph2.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+		    }
+		    
+		    //UTEMPGRAF
+		    XYChart.Series utempGraph2 = new XYChart.Series();
+		    Map<String, Integer> utempData2 = sql.getUtempBetweenDates(fromFieldstr, toFieldstr);
+		    for (Map.Entry<String,Integer> entry : utempData2.entrySet()) {
+		    	 utempGraph2.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+		    }
+		    
+		    //INNETEMPGRAF
+		    XYChart.Series itempGraph2 = new XYChart.Series();
+		    Map<String, Integer> itempData2 = sql.getItempBetweenDates(fromFieldstr, toFieldstr);
+		    for (Map.Entry<String,Integer> entry : itempData2.entrySet()) {
+		    	 itempGraph2.getData().add(new XYChart.Data(entry.getKey(), entry.getValue()));
+		    }
+		    
+		    //namnge grafer
+		    SMHIgraph2.setName("SMHI");
+		    OptGraph2.setName("Optimering");
+		    utempGraph2.setName("UteTemp");
+		    itempGraph2.setName("InneTemp");
+		    graph.getData().addAll(SMHIgraph2, OptGraph2, utempGraph2, itempGraph2); 
+
+			
+			
+		});
 		
 		textFields8.setAlignment(Pos.CENTER);
 		textFields8.getChildren().addAll(fromField, dash, toField, updateBtn8 );
@@ -678,12 +725,12 @@ public class Main extends Application {
 	
 	private String getCurrentDateTEST() { 
 		//System.out.println(getCurrentDate()); //TEST
-		return "20230811";
+		return "20231109";
 	}
 	
 	private String getOneWeekAgoDateTEST() {
 		//System.out.println(getOneWeekAgoDate()); //TEST
-		return "20230810";
+		return "20231107";
 	}
 	
 	private String getCurrentDate() {
