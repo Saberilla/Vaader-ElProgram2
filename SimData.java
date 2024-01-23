@@ -1,4 +1,6 @@
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.text.DecimalFormat;
 
 public class SimData {
 	
@@ -14,6 +16,8 @@ public class SimData {
 	private double temperaturTotal;
 	private double tempUpp;
 	private double tempNed;
+	
+	private final DecimalFormat decfor = new DecimalFormat("0.00"); 
 	
 
 	public SimData(Date date, int timme, double kostnad, int tmin, int tmax, double tempUpp, double tempNed,
@@ -75,6 +79,8 @@ public class SimData {
 
 	public double getTempUpp() {
 		return tempUpp;
+		//För att få decimaler
+		//return decfor.format(tempUpp); 
 	}
 
 	public double getTempNed() {

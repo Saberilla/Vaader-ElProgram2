@@ -62,27 +62,35 @@ public class Main extends Application {
 	private Button defBtn;
 	private Button grafBtn;
 	
+	//DAGDATA
 	private Scene scene1;
 	private BorderPane root1;
 	
+	//SIMULERING
 	private Scene scene2;
 	private BorderPane root2;
 	
+	//RESULTAT
 	private Scene scene3;
 	private BorderPane root3;
 	
+	//DAGTYP
 	private Scene scene4;
 	private BorderPane root4;
 	
+	//KALENDER
 	private Scene scene5;
 	private BorderPane root5;
 	
+	//PARAMETRAR
 	private Scene scene6;
 	private BorderPane root6;
 	
+	//DEF
 	private Scene scene7;
 	private BorderPane root7;
 	
+	//GRAF
 	private Scene scene8;
 	private BorderPane root8;
 
@@ -113,15 +121,6 @@ public class Main extends Application {
         	}
         });
         
-       /*stage.widthProperty().addListener((obs, oldVal, newVal) -> {
-            this.width = stage.getWidth();
-            System.out.println(this.width);
-       });
-
-       stage.heightProperty().addListener((obs, oldVal, newVal) -> {
-            this.height = stage.getHeight();
-            System.out.println(this.height);
-       });*/
         
         stage.setScene(scene1); 
         stage.setResizable(true);
@@ -129,35 +128,14 @@ public class Main extends Application {
         
     }
 	
-	private Scene createScene1() {
+	
+
+	
+	private Scene createScene1() { //DAGDATA
 				
 		//huvudroten
 		root1 = new BorderPane();
-				
-		//HBox för meny knappar
-		/*hbox1 = new HBox(10);
-		hbox1.setPadding(new Insets(10,10,10,10));
-				
-		//menyknappar
-		dagBtn1 = new Button("Dagdata");
-		dagBtn1.setDisable(true);
-		simBtn1 = new Button("Simulering");
-		simBtn1.setOnAction(e -> switchScenes(scene2));
-		resBtn1 = new Button("Resultat");
-		resBtn1.setOnAction(e -> switchScenes(scene3));
-		dtypBtn1 = new Button("Dagtyp");
-		dtypBtn1.setOnAction(e -> switchScenes(scene4));
-		parBtn1 = new Button("Parametrar");
-		parBtn1.setOnAction(e -> switchScenes(scene5));
-				
-		hbox1.getChildren().add(dagBtn1);
-		hbox1.getChildren().add(simBtn1);
-		hbox1.getChildren().add(resBtn1);
-		hbox1.getChildren().add(dtypBtn1);
-		hbox1.getChildren().add(parBtn1);
-
-		root1.setTop(hbox1);*/
-		
+	
 		root1.setTop(createMenu(true, false, false, false, false, false, false, false));
 		
 		//TableView
@@ -172,47 +150,30 @@ public class Main extends Application {
 		
 		root1.setCenter(table1);
 		
-		TableColumn<Data, Date> c1 = new TableColumn<>("date");
-		c1.setCellValueFactory(new PropertyValueFactory<>("date"));
+		createColumnsTable1();
 		
-		TableColumn<Data, Integer> c2 = new TableColumn<>("timme");
-		c2.setCellValueFactory(new PropertyValueFactory<>("timme"));
-		
-		TableColumn<Data, Double> c3 = new TableColumn<>("SMHIpris");
-		c3.setCellValueFactory(new PropertyValueFactory<>("kostnad"));
-		
-		TableColumn<Data, Double> c4 = new TableColumn<>("SMHItemp");
-		c4.setCellValueFactory(new PropertyValueFactory<>("temp"));
-		
-		TableColumn<Data, Integer> c5 = new TableColumn<>("tmin");
-		c5.setCellValueFactory(new PropertyValueFactory<>("tmin"));
-		
-		TableColumn<Data, Integer> c6 = new TableColumn<>("tmax");
-		c6.setCellValueFactory(new PropertyValueFactory<>("tmax"));
-
-		
-		table1.getColumns().addAll(c1, c2, c3, c4, c5, c6);
+		//fillDefaultTable1();
 		
 		//TextFields datum
 		HBox textFields1 = new HBox();
 		textFields1.setPadding(new Insets(10,10,10,10));
 		textFields1.setStyle("-fx-spacing: 10");
 		TextField fromDate = new TextField();
-		fromDate.setPromptText("YYMMDDHH");
+		fromDate.setText(getCurrentDateWithHour());
 		fromDate.setStyle("-fx-font-size: 18");
 		TextField toDate = new TextField();
-		toDate.setPromptText("YYMMDDHH");
+		toDate.setText(getCurrentDateWithHour());
 		toDate.setStyle("-fx-font-size: 18");
 		Label from = new Label("From: ");
 		Label to = new Label(" To: ");
 		
 		//ButtonUpdate
 		Button updateBtn1 = new Button("Update");
+		
 		updateBtn1.setOnAction(e -> {
 			String dateFrom = fromDate.getText().trim();
 			String dateTo = toDate.getText().trim();
-			ObservableList<Data> datesDataLista = FXCollections.observableArrayList(sql.getBetweenDatesData(dateFrom, dateTo));
-			table1.setItems(datesDataLista);
+			fillTable1(dateFrom, dateTo);
 		});
 		
 		textFields1.setAlignment(Pos.CENTER);
@@ -224,8 +185,42 @@ public class Main extends Application {
 		return scene1;
 	}
 	
-	private Scene createScene2() {
-		//huvudroten
+	private void fillTable1(String dateFrom, String dateTo) {
+		ObservableList<Data> datesDataLista = FXCollections.observableArrayList(sql.getBetweenDatesData(dateFrom, dateTo));
+		table1.setItems(datesDataLista);
+	}
+	
+	private void fillDefaultTable1() {
+		ObservableList<Data> datesDataLista = FXCollections.observableArrayList
+				(sql.getBetweenDatesData(getCurrentDateWithHour(), getCurrentDateWithHour()));
+		table1.setItems(datesDataLista);
+	}
+	
+	private void createColumnsTable1() {
+		
+		TableColumn<Data, Date> c1 = new TableColumn<>("      date      ");
+		c1.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
+		TableColumn<Data, Integer> c2 = new TableColumn<>("timme");
+		c2.setCellValueFactory(new PropertyValueFactory<>("timme"));
+		
+		TableColumn<Data, Double> c3 = new TableColumn<>("NORDpris");
+		c3.setCellValueFactory(new PropertyValueFactory<>("kostnad"));
+		
+		TableColumn<Data, Double> c4 = new TableColumn<>("SMHItemp");
+		c4.setCellValueFactory(new PropertyValueFactory<>("temp"));
+		
+		TableColumn<Data, Integer> c5 = new TableColumn<>("tmin");
+		c5.setCellValueFactory(new PropertyValueFactory<>("tmin"));
+		
+		TableColumn<Data, Integer> c6 = new TableColumn<>("tmax");
+		c6.setCellValueFactory(new PropertyValueFactory<>("tmax"));
+		
+		table1.getColumns().addAll(c1, c2, c3, c4, c5, c6);
+	}
+	
+	private Scene createScene2() { //SIMULERING
+		//Huvudrot
 		root2 = new BorderPane();
 				
 		root2.setTop(createMenu(false, true, false, false, false, false, false, false));
@@ -233,10 +228,58 @@ public class Main extends Application {
 		//tableview
 		root2.setCenter(table2);
 		
+		createColumnsTable2();
+		
+		HBox textFields2 = new HBox();
+		textFields2.setPadding(new Insets(10,10,10,10));
+		textFields2.setStyle("-fx-spacing: 5");
+		TextField dateField = new TextField();
+		dateField.setPromptText("YYYYMMDD");
+		//dateField.setStyle("-fx-font-size: 18");
+		TextField tidField = new TextField();
+		tidField.setPromptText("HH");
+		//tidField.setStyle("-fx-font-size: 18");
+		TextField idField = new TextField();
+		idField.setPromptText("0000");
+		//idField.setStyle("-fx-font-size: 18");
+		TextField tempField = new TextField();
+		tempField.setPromptText("00");
+		//tempField.setStyle("-fx-font-size: 18");
+		Label date = new Label("Date:");
+		Label tid = new Label("Tid:");
+		Label altid = new Label("Alt_id:");
+		Label temp = new Label("Temp:");
+		
+		Button updateBtn2 = new Button("Update");
+		updateBtn2.setOnAction(e -> {
+			String datestr = dateField.getText().trim();
+			String tidstr = tidField.getText().trim();
+			String altidstr = idField.getText().trim();
+			String tempstr = tempField.getText().trim();
+
+			fillTable2(datestr, tidstr, altidstr, tempstr);
+			
+		});		
+		textFields2.setAlignment(Pos.CENTER);
+		textFields2.getChildren().addAll(date, dateField, tid, tidField, altid, idField, temp, tempField, updateBtn2);
+		
+		root2.setBottom(textFields2);
+				
+		scene2 = new Scene(root2, this.width, this.height);		
+		return scene2;
+	}
+	
+	private void fillTable2(String datestr, String tidstr, String altidstr, String tempstr) {
+		ObservableList<SimData> dataLista = FXCollections.observableArrayList(
+				sql.getSimData(datestr, tidstr, altidstr, tempstr));
+		table2.setItems(dataLista);
+	}
+	
+	private void createColumnsTable2() {
 		TableColumn<SimData, Integer> c1 = new TableColumn<>("ordning");
 		c1.setCellValueFactory(new PropertyValueFactory<>("ordning"));
 		
-		TableColumn<SimData, Date> c2 = new TableColumn<>("date");
+		TableColumn<SimData, Date> c2 = new TableColumn<>("      date      ");
 		c2.setCellValueFactory(new PropertyValueFactory<>("date"));
 		
 		TableColumn<SimData, Integer> c3 = new TableColumn<>("timme");
@@ -270,47 +313,6 @@ public class Main extends Application {
 		c12.setCellValueFactory(new PropertyValueFactory<>("temperaturTotal"));
 		
 		table2.getColumns().addAll(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12);
-		
-		
-		HBox textFields2 = new HBox();
-		textFields2.setPadding(new Insets(10,10,10,10));
-		textFields2.setStyle("-fx-spacing: 5");
-		TextField dateField = new TextField();
-		dateField.setPromptText("YYYYMMDD");
-		//dateField.setStyle("-fx-font-size: 18");
-		TextField tidField = new TextField();
-		tidField.setPromptText("HH");
-		//tidField.setStyle("-fx-font-size: 18");
-		TextField idField = new TextField();
-		idField.setPromptText("0000");
-		//idField.setStyle("-fx-font-size: 18");
-		TextField tempField = new TextField();
-		tempField.setPromptText("00");
-		//tempField.setStyle("-fx-font-size: 18");
-		Label date = new Label("Date:");
-		Label tid = new Label("Tid:");
-		Label altid = new Label("Alt_id:");
-		Label temp = new Label("Temp:");
-		
-		Button updateBtn2 = new Button("Update");
-		updateBtn2.setOnAction(e -> {
-			String datestr = dateField.getText().trim();
-			String tidstr = tidField.getText().trim();
-			String altidstr = idField.getText().trim();
-			String tempstr = tempField.getText().trim();
-
-			ObservableList<SimData> dataLista = FXCollections.observableArrayList(
-					sql.getSimData(datestr, tidstr, altidstr, tempstr));
-			table2.setItems(dataLista);
-			
-		});		
-		textFields2.setAlignment(Pos.CENTER);
-		textFields2.getChildren().addAll(date, dateField, tid, tidField, altid, idField, temp, tempField, updateBtn2);
-		
-		root2.setBottom(textFields2);
-				
-		scene2 = new Scene(root2, this.width, this.height);		
-		return scene2;
 	}
 	
 	private Scene createScene3() { //RESULTAT
@@ -320,34 +322,17 @@ public class Main extends Application {
 		
 		root3.setCenter(table3);
 		
-		TableColumn<ResData, String> c1 = new TableColumn<>("bertid");
-		c1.setCellValueFactory(new PropertyValueFactory<>("bertid"));
-		
-		TableColumn<ResData, String> c2 = new TableColumn<>("typ");
-		c2.setCellValueFactory(new PropertyValueFactory<>("typ"));
-		
-		TableColumn<ResData, Integer> c3 = new TableColumn<>("alt_id");
-		c3.setCellValueFactory(new PropertyValueFactory<>("alt_id"));
-		
-		TableColumn<ResData, Integer> c4 = new TableColumn<>("date");
-		c4.setCellValueFactory(new PropertyValueFactory<>("date"));
-		
-		TableColumn<ResData, Integer> c5 = new TableColumn<>("timme");
-		c5.setCellValueFactory(new PropertyValueFactory<>("timme"));
-		
-		TableColumn<ResData, Double> c6 = new TableColumn<>("temp");
-		c6.setCellValueFactory(new PropertyValueFactory<>("temp"));
-		
-		table3.getColumns().addAll(c1, c2, c3, c4, c5, c6);
+		fillTable3(getCurrentDate(), "0");
+		createColumnsTable3();
 		
 		HBox textFields3 = new HBox();
 		textFields3.setPadding(new Insets(10,10,10,10));
 		textFields3.setStyle("-fx-spacing: 10");
 		TextField dateField = new TextField();
-		dateField.setPromptText("YYYYMMDD"); //TEST
+		dateField.setText(getCurrentDate()); 
 		dateField.setStyle("-fx-font-size: 18");
 		TextField tidField = new TextField();
-		tidField.setPromptText("HH");
+		tidField.setText("0");
 		tidField.setStyle("-fx-font-size: 18");
 		Label dateFrom = new Label("Datum: ");
 		Label hour = new Label(" Timme: ");
@@ -357,9 +342,7 @@ public class Main extends Application {
 			String datestr = dateField.getText().trim();
 			String tidstr = tidField.getText().trim();
 
-			ObservableList<ResData> dataLista = FXCollections.observableArrayList(
-					sql.getResultatData(datestr, tidstr));
-			table3.setItems(dataLista);
+			fillTable3(datestr, tidstr);
 			
 		});
 		
@@ -372,28 +355,43 @@ public class Main extends Application {
 		return scene3;
 	}
 	
+	private void fillTable3(String datestr, String tidstr) {
+		ObservableList<ResData> dataLista = FXCollections.observableArrayList(
+				sql.getResultatData(datestr, tidstr));
+		table3.setItems(dataLista);
+	}
+	
+	private void createColumnsTable3() {
+		TableColumn<ResData, String> c1 = new TableColumn<>("bertid");
+		c1.setCellValueFactory(new PropertyValueFactory<>("bertid"));
+		
+		TableColumn<ResData, String> c2 = new TableColumn<>("typ");
+		c2.setCellValueFactory(new PropertyValueFactory<>("typ"));
+		
+		TableColumn<ResData, Integer> c3 = new TableColumn<>("alt_id");
+		c3.setCellValueFactory(new PropertyValueFactory<>("alt_id"));
+		
+		TableColumn<ResData, Integer> c4 = new TableColumn<>("      date      ");
+		c4.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
+		TableColumn<ResData, Integer> c5 = new TableColumn<>("timme");
+		c5.setCellValueFactory(new PropertyValueFactory<>("timme"));
+		
+		TableColumn<ResData, Double> c6 = new TableColumn<>("temp");
+		c6.setCellValueFactory(new PropertyValueFactory<>("temp"));
+		
+		table3.getColumns().addAll(c1, c2, c3, c4, c5, c6);
+	}
+	
 	private Scene createScene4() { //DAGTYP
 		root4 = new BorderPane();
 		root4.setTop(createMenu(false, false, false, true, false, false , false, false));
 		
 		root4.setCenter(table4);
-		ObservableList<DagtData> dataLista = FXCollections.observableArrayList(
-				sql.getDagtData());
-		table4.setItems(dataLista);
 		
-		TableColumn<DagtData, String> c1 = new TableColumn<>("dagtyp");
-		c1.setCellValueFactory(new PropertyValueFactory<>("dagtyp"));
+		fillTable4();
+		createColumnsTable4();
 		
-		TableColumn<DagtData, Integer> c2 = new TableColumn<>("timme");
-		c2.setCellValueFactory(new PropertyValueFactory<>("timme"));
-		
-		TableColumn<DagtData, Integer> c3 = new TableColumn<>("tmin");
-		c3.setCellValueFactory(new PropertyValueFactory<>("tmin"));
-		
-		TableColumn<DagtData, Integer> c4 = new TableColumn<>("tmax");
-		c4.setCellValueFactory(new PropertyValueFactory<>("tmax"));
-		
-		table4.getColumns().addAll(c1, c2, c3, c4);
 		
 		HBox textFields4 = new HBox();
 		textFields4.setPadding(new Insets(10,10,10,10));
@@ -413,35 +411,28 @@ public class Main extends Application {
 		
 		Button updateBtn4 = new Button("Update");
 		//FUNKTION
-		
 		updateBtn4.setOnAction(e -> {
 			String typ = typField.getText().trim();
 			String timme = timmeField.getText().trim();
 			String tmin = minField.getText().trim();
 			String tmax = maxField.getText().trim();
 			
-			if(sql.ifKeyDagtExists(typ, timme)) { //REFACT Anv samma lista
-				//System.out.println("Finns");
+			if(sql.ifKeyDagtExists(typ, timme)) { 
+
 				if(tmin.isEmpty() && tmax.isEmpty()) { 
 					//delete
 					sql.deleteDagtData(typ, timme);
-					ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
-							sql.getDagtData());
-					table4.setItems(newDataLista);
+					fillTable4();
 
 				} else {
 					//update
 					sql.updateDagtData(typ, timme, tmin, tmax);
-					ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
-							sql.getDagtData());
-					table4.setItems(newDataLista);
+					fillTable4();
 				}
 			} else {
 				//insert
 				sql.insertDagtData(typ, timme, tmin, tmax);
-				ObservableList<DagtData> newDataLista = FXCollections.observableArrayList(
-						sql.getDagtData());
-				table4.setItems(newDataLista);
+				fillTable4();
 			}
 		});
 		
@@ -454,15 +445,51 @@ public class Main extends Application {
 		return scene4;
 	}
 	
+	private void fillTable4() {
+		ObservableList<DagtData> dataLista = FXCollections.observableArrayList(
+				sql.getDagtData());
+		table4.setItems(dataLista);
+	}
+	
+	private void createColumnsTable4() {
+		TableColumn<DagtData, String> c1 = new TableColumn<>("dagtyp");
+		c1.setCellValueFactory(new PropertyValueFactory<>("dagtyp"));
+		
+		TableColumn<DagtData, Integer> c2 = new TableColumn<>("timme");
+		c2.setCellValueFactory(new PropertyValueFactory<>("timme"));
+		
+		TableColumn<DagtData, Integer> c3 = new TableColumn<>("tmin");
+		c3.setCellValueFactory(new PropertyValueFactory<>("tmin"));
+		
+		TableColumn<DagtData, Integer> c4 = new TableColumn<>("tmax");
+		c4.setCellValueFactory(new PropertyValueFactory<>("tmax"));
+		
+		table4.getColumns().addAll(c1, c2, c3, c4);
+	}
+	
 	private Scene createScene5() {
 		root5 = new BorderPane();
 
 		root5.setTop(createMenu(false, false, false, false, true, false ,false, false));
 		
 		root5.setCenter(table5);
+		
+		fillTable5();
+		
+		createColumnsTable5();
+		
+		
+		scene5 = new Scene(root5, this.width, this.height);		
+		return scene5;
+	}
+	
+	private void fillTable5() {
 		ObservableList<KalenderData> dataLista = FXCollections.observableArrayList(
 				sql.getKalenderData());
 		table5.setItems(dataLista);
+	}
+	
+	private void createColumnsTable5() {
 		
 		table5.setEditable(true);
 		
@@ -480,9 +507,6 @@ public class Main extends Application {
 		});
 		
 		table5.getColumns().addAll(c1, c2);
-		
-		scene5 = new Scene(root5, this.width, this.height);		
-		return scene5;
 	}
 	
 	private Scene createScene6() {
@@ -528,31 +552,19 @@ public class Main extends Application {
 		root7.setTop(createMenu(false, false, false, false, false, false, true, false));
 		
 		root7.setCenter(table7);
-		ObservableList<DefaulterData> dataLista = FXCollections.observableArrayList(
-				sql.getDefaulterData());
-		table7.setItems(dataLista);
 		
-		TableColumn<DefaulterData, String> c1 = new TableColumn<>("xdefaulter");
-		c1.setCellValueFactory(new PropertyValueFactory<>("xdefaulter"));
-		TableColumn<DefaulterData, String> c2 = new TableColumn<>("typ");
-		c2.setCellValueFactory(new PropertyValueFactory<>("typ"));
-		TableColumn<DefaulterData, Integer> c3 = new TableColumn<>("varde");
-		c3.setCellValueFactory(new PropertyValueFactory<>("varde"));
+		fillTable7();
+		createColumnsTable7();
 
-		table7.getColumns().addAll(c1, c2, c3);
-		
+		//textFields
 		HBox textFields7 = new HBox();
 		textFields7.setPadding(new Insets(10,10,10,10));
 		textFields7.setStyle("-fx-spacing: 5");
 		TextField defaultField = new TextField();
-		//defaultField.setPromptText("default");
-		//dateField.setStyle("-fx-font-size: 18");
 		TextField typField = new TextField();
-		//typField.setPromptText("typ");
-		//tidField.setStyle("-fx-font-size: 18");
 		TextField vardeField = new TextField();
 		vardeField.setPromptText("0.0");
-		//idField.setStyle("-fx-font-size: 18");
+
 		Label defaulter = new Label("xdefault:");
 		Label typ = new Label("typ:");
 		Label varde = new Label("varde:");
@@ -568,22 +580,16 @@ public class Main extends Application {
 				if(defaultstr.isEmpty() && vardestr.isEmpty()) {
 					//delete
 					sql.deleteDefaulterData(typstr);
-					ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
-							sql.getDefaulterData());
-					table7.setItems(newDataLista);
+					fillTable7();
 				} else {
 					//update
 					sql.updateDefaulterData(defaultstr, typstr, vardestr);
-					ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
-							sql.getDefaulterData());
-					table7.setItems(newDataLista);
+					fillTable7();
 				}
 			} else {
 				//insert
 				sql.insertDefaulterData(defaultstr, typstr, vardestr);
-				ObservableList<DefaulterData> newDataLista = FXCollections.observableArrayList(
-						sql.getDefaulterData());
-				table7.setItems(newDataLista);
+				fillTable7();
 			}
 			
 		});
@@ -595,6 +601,23 @@ public class Main extends Application {
 		
 		scene7 = new Scene(root7, this.width, this.height);		
 		return scene7;
+	}
+	
+	private void fillTable7() {
+		ObservableList<DefaulterData> dataLista = FXCollections.observableArrayList(
+				sql.getDefaulterData());
+		table7.setItems(dataLista);
+	}
+	
+	private void createColumnsTable7() {
+		TableColumn<DefaulterData, String> c1 = new TableColumn<>("xdefaulter");
+		c1.setCellValueFactory(new PropertyValueFactory<>("xdefaulter"));
+		TableColumn<DefaulterData, String> c2 = new TableColumn<>("typ");
+		c2.setCellValueFactory(new PropertyValueFactory<>("typ"));
+		TableColumn<DefaulterData, Integer> c3 = new TableColumn<>("varde");
+		c3.setCellValueFactory(new PropertyValueFactory<>("varde"));
+
+		table7.getColumns().addAll(c1, c2, c3);
 	}
 	
 	private Scene createScene8() {
@@ -758,6 +781,15 @@ public class Main extends Application {
 		strDate = formatter.format(newDate);
 				
 		return strDate;
+	}
+	
+	private String getCurrentDateWithHour() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHH");
+		 String strDate = "";
+		
+		 Date todayDate = new Date();
+		 strDate = formatter.format(todayDate);
+		 return strDate;
 	}
 	
 	private HBox createMenu(Boolean dag, Boolean sim, Boolean res, Boolean dtyp, Boolean kal, Boolean par, Boolean def, Boolean graf) {

@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Calendar;
-import java.util.Date;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
+
 
 
 public class SQLHandler {
@@ -28,8 +27,7 @@ public class SQLHandler {
 	private String psw = "raspberry";
 	
 	private ResultSet rs = null;
-	
-	private final DecimalFormat decfor = new DecimalFormat("0.00");  
+	 
 	
 public SQLHandler() {
 	try {
@@ -63,7 +61,36 @@ public void closeConnection(){
 	
 }
 
+	private void open() {
+		
+		try {
+			
+			connection = DriverManager.getConnection(url, user, psw);
+			stmt = connection.createStatement();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println("open");
+	}
+	
+	private void close() {
+		try {
+			
+			rs.close();
+			stmt.close();
+			connection.close();
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+	}
+
 	public List<DefaulterData> getDefaulterData(){
+		
+		open();
 		
 		List<DefaulterData> list = new ArrayList<>();
 		try {
@@ -87,12 +114,14 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		
+		close();
+		
 		return Collections.unmodifiableList(list);
 		
 	}
 	
 	public void insertDefaulterData(String defaulter, String typ, String varde) {
-		
+		open();
 		try {
 
 			String sql;
@@ -104,11 +133,11 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 	}
 	
 	public void updateDefaulterData(String defaulter, String typ, String varde) {
-		
+		open();
 		try {
 
 			String sql;
@@ -119,10 +148,11 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 	}
 	
 	public void deleteDefaulterData(String typ) {
+		open();
 		try {
 
 			String sql;
@@ -133,10 +163,11 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 	}
 
 	public List<KalenderData> getKalenderData(){
-		
+		open();
 		List<KalenderData> list = new ArrayList<>();
 		try {
 			
@@ -158,6 +189,8 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		close();
 		return Collections.unmodifiableList(list);
 		
 	}
@@ -167,7 +200,7 @@ public void closeConnection(){
 		String strDate = "";
 		strDate = formatter.format(date);
 		//System.out.println(strDate);
-		
+		open();
 		try {
 
 			String sql;
@@ -179,12 +212,12 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		
-		
+		close();
 	}
 
 
 	public void insertDagtData(String typ, String timme, String tmin, String tmax){
-		
+		open();
 		try {
 			
 			String sql;
@@ -194,10 +227,11 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 	} 
 	
 	public void deleteDagtData(String dagtyp, String timme) {
+		open();
 		try {
 
 			String sql;
@@ -208,7 +242,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 	}
 	
 	private String createDeleteStatement(String dagtyp, String timme) {
@@ -223,6 +257,7 @@ public void closeConnection(){
 	}
 	
 	public void updateDagtData(String dagtyp, String timme, String tmin, String tmax) {
+		open();
 		try {
 
 			String sql;
@@ -233,6 +268,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 	}
 	
 	private String createUpdateStatement(String dagtyp, String timme, String tmin, String tmax) {
@@ -254,7 +290,7 @@ public void closeConnection(){
 	
 	public boolean ifKeyDefaulterExists(String typ) {
 		boolean exists = false;
-		
+		open();
 		try {
 
 			String sql = "SELECT typ FROM Defaulter WHERE typ=" + "'" + typ + "'" + ";";
@@ -274,6 +310,7 @@ public void closeConnection(){
 			
 			e.printStackTrace();
 		}
+		close();
 
 		return exists;
 		
@@ -282,7 +319,7 @@ public void closeConnection(){
 	
 	public boolean ifKeyDagtExists(String dagtyp, String timme) {
 		boolean exists = false;
-		
+		open();
 		try {
 
 			String sql = createExistsStatement(dagtyp, timme);
@@ -308,7 +345,7 @@ public void closeConnection(){
 			
 			e.printStackTrace();
 		}
-
+		close();
 		return exists;
 		
 		
@@ -329,7 +366,7 @@ public void closeConnection(){
 	
 	
 	public List<DagtData> getDagtData(){
-		
+		open();
 		List<DagtData> list = new ArrayList<>();
 		try {
 			
@@ -353,6 +390,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 		return Collections.unmodifiableList(list);
 		
 	}
@@ -364,6 +402,7 @@ public void closeConnection(){
 		List<ResData> list = new ArrayList<>();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String bertidStr = "";
+		open();
 		try {
 			
 			String sql;
@@ -389,7 +428,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		return Collections.unmodifiableList(list); 
 	}
 	
@@ -406,7 +445,7 @@ public void closeConnection(){
 	public List<Data> getBetweenDatesData(String dateFrom, String dateTo){
 		
 		List<Data> list = new ArrayList<>(); 
-		
+		open();
 		try {
 			
 			String sql;
@@ -430,7 +469,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		return Collections.unmodifiableList(list); 
 		
 	}
@@ -452,7 +491,7 @@ public void closeConnection(){
 	public Map<String, Integer> getSMHIBetweenDates(String fromDate, String toDate){
 			
 		Map<String, Integer> SMHIdata = new LinkedHashMap<String, Integer>();
-
+		open();
 		try {
 			
 			String sql;
@@ -475,7 +514,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		return Collections.unmodifiableMap(SMHIdata); 
 			
 	}
@@ -494,7 +533,7 @@ public void closeConnection(){
 	public Map<String, Integer> getOptBetweenDates(String fromDate, String toDate){
 		
 		Map<String, Integer> Optdata = new LinkedHashMap<String, Integer>();
-		
+		open();
 		try {
 			
 			String sql;
@@ -516,7 +555,7 @@ public void closeConnection(){
 			e.printStackTrace();
 		}
 		
-
+		close();
 		return Collections.unmodifiableMap(Optdata); 
 				
 	}
@@ -533,7 +572,7 @@ public void closeConnection(){
 	public Map<String, Integer> getUtempBetweenDates(String fromDate, String toDate){
 		
 		Map<String, Integer> utempData = new LinkedHashMap<String, Integer>();
-		
+		open();
 		try {
 			
 			String sql;
@@ -554,7 +593,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		return Collections.unmodifiableMap(utempData); 
 				
 	}
@@ -571,7 +610,7 @@ public void closeConnection(){
 	public Map<String, Integer> getItempBetweenDates(String fromDate, String toDate){
 		
 		Map<String, Integer> itempData = new LinkedHashMap<String, Integer>();
-		
+		open();
 		try {
 			
 			String sql;
@@ -592,7 +631,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		
 		return Collections.unmodifiableMap(itempData);  //itempData
 				
@@ -629,7 +668,8 @@ public void closeConnection(){
 			double paaAlfa = getpaaAlfa();
 			double avBeta = getavBeta();
 			
-			rs = stmt.executeQuery(sql);
+			open();
+			rs = stmt.executeQuery(sql); //here
 			
 			
 			double kostnadTotal = 0;
@@ -674,13 +714,14 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		close();
 		return Collections.unmodifiableList(list); 
 		
 	}
 	
 	public double getavBeta() {
 		double avBeta = 0;
+		open();
 		try {
 			
 			String sql;
@@ -694,11 +735,13 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 		return avBeta;
 	}
 	
 	public double getpaaAlfa() {
 		double paaAlfa = 0;
+		open();
 		try {
 			
 			String sql;
@@ -712,10 +755,12 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 		return paaAlfa;
 	}
 	
 	public void updateAlfaBeta(String alfa, String beta) {
+		open();
 		try {
 			
 			String sql;
@@ -725,6 +770,7 @@ public void closeConnection(){
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		close();
 	}
 	
 	private String createSimDataStatement(String date, String timme, String id) {
