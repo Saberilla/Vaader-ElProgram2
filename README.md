@@ -1,7 +1,7 @@
 # Vaader-ElProgram2
 This is a Home Optimization Project for lowest energy costs. The USP is that we use the isolated house as a heat battery to minimize energycosts.
 
-Please watch the video for more details! >> https://www.youtube.com/watch?v=ln52k-g5RTQ&t=29s
+Please watch the video for more details! >> https://youtu.be/ln52k-g5RTQ?si=epgsfeSTMuHEkCsr
 
 This repo is an user interface created for the database for easier maintenance and interaction with the database and the optimization program in the Vaader-ElOptimering repo. 
 
